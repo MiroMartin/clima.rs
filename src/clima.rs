@@ -15,9 +15,13 @@ struct Current {
     pub temperature_2m: f32,
 }
 
-pub fn clima_json_request(url: &str) -> Result<(), reqwest::Error> {
+pub fn http_req(url: &str) -> Result<String, reqwest::Error> {
     let respuesta = reqwest::blocking::get(url)?;
     let cuerpo_json = respuesta.text()?;
+    Ok(cuerpo_json)
+}
+
+pub fn clima_json_request(cuerpo_json: &str) {
 
     let datos: Datos = serde_json::from_str(&cuerpo_json).expect("error deserializando");
 
@@ -31,5 +35,4 @@ pub fn clima_json_request(url: &str) -> Result<(), reqwest::Error> {
         datos.current.apparent_temperature
     );
 
-    Ok(())
 }
