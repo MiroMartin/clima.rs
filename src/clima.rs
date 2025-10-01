@@ -2,6 +2,12 @@ use reqwest;
 use serde::Deserialize;
 use serde_json;
 
+pub fn http_req(url: &str) -> Result<String, reqwest::Error> {
+    let respuesta = reqwest::blocking::get(url)?;
+    let cuerpo_json = respuesta.text()?;
+    Ok(cuerpo_json)
+}
+
 #[derive(Debug, Deserialize)]
 struct Datos {
     pub current: Current,
@@ -13,12 +19,6 @@ struct Current {
     pub interval: i32,
     pub apparent_temperature: f32,
     pub temperature_2m: f32,
-}
-
-pub fn http_req(url: &str) -> Result<String, reqwest::Error> {
-    let respuesta = reqwest::blocking::get(url)?;
-    let cuerpo_json = respuesta.text()?;
-    Ok(cuerpo_json)
 }
 
 pub fn clima_json_request(cuerpo_json: &str) {
@@ -35,4 +35,15 @@ pub fn clima_json_request(cuerpo_json: &str) {
         datos.current.apparent_temperature
     );
 
+}
+
+#[derive(Debug, Deserialize]
+struct Result {
+    zero: Locacion,
+}
+
+#[derive(Debug)]
+struct Locacion {
+    latitude: f64,
+    longitude: f64,
 }
